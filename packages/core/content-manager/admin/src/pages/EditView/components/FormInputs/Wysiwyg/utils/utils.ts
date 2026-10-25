@@ -175,7 +175,7 @@ export const listHandler = (
               doc.replaceRange('', { line: i, ch: 0 }, { line: i, ch: insertion.length });
             }
           } else {
-            const positionInList = i - pos[0];
+            const positionInList = i - pos[0] + 1;
 
             doc.replaceRange(getListItemMarker(listType, positionInList), { line: i, ch: 0 });
           }
