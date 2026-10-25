@@ -53,4 +53,31 @@ describe('CellContent', () => {
     expect(screen.getByText('-')).toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
+
+  it('renders "false" when a boolean field is set to false', () => {
+    render({
+      content: false,
+      attribute: { type: 'boolean' } as unknown as CellContentProps['attribute'],
+    });
+
+    expect(screen.getByText('false')).toBeInTheDocument();
+  });
+
+  it('renders "true" when a boolean field is set to true', () => {
+    render({
+      content: true,
+      attribute: { type: 'boolean' } as unknown as CellContentProps['attribute'],
+    });
+
+    expect(screen.getByText('true')).toBeInTheDocument();
+  });
+
+  it('renders "-" when a boolean field is null', () => {
+    render({
+      content: null as unknown as CellContentProps['content'],
+      attribute: { type: 'boolean' } as unknown as CellContentProps['attribute'],
+    });
+
+    expect(screen.getByText('-')).toBeInTheDocument();
+  });
 });
