@@ -100,6 +100,20 @@ beforeEach(() => {
 
 const getToFile = () => (sharp as any).__getToFile() as jest.Mock;
 const getToFileState = () => (sharp as any).__getToFileState() as { maxInFlight: number };
+const setNextMetadata = (metadata: {
+  width: number | null;
+  height: number | null;
+  format: string;
+}) =>
+  (
+    sharp as typeof sharp & {
+      __setNextMetadata: (value: {
+        width: number | null;
+        height: number | null;
+        format: string;
+      }) => void;
+    }
+  ).__setNextMetadata(metadata);
 
 describe('generateResponsiveFormats (sequential resizes)', () => {
   test('never runs more than one toFile at a time for all breakpoints', async () => {
@@ -107,6 +121,20 @@ describe('generateResponsiveFormats (sequential resizes)', () => {
 
     expect(getToFile()).toHaveBeenCalledTimes(3);
     expect(getToFileState().maxInFlight).toBe(1);
+  });
+
+  test.each<[string, number, number, number]>([
+    ['landscape', 1600, 400, 3],
+    ['portrait', 400, 1600, 3],
+    ['square below largest breakpoint', 900, 900, 2],
+    ['square above largest breakpoint', 1200, 1200, 3],
+  ])('generates the expected formats for a %s image', async (_label, width, height, count) => {
+    setNextMetadata({ width, height, format: 'jpeg' });
+
+    const formats = await imageManipulation.generateResponsiveFormats(testFile);
+
+    expect(formats).toHaveLength(count);
+    expect(getToFile()).toHaveBeenCalledTimes(count);
   });
 });
 
