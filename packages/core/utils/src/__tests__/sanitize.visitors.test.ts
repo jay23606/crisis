@@ -477,6 +477,48 @@ describe('Sanitize visitors util', () => {
       expect(set).toHaveBeenCalledTimes(0);
     });
 
+    test('removes bidirectional relation when target is unauthorized', async () => {
+      const remove = jest.fn();
+      const set = jest.fn();
+      const bidirectionalAttribute = {
+        type: 'relation',
+        relation: 'manyToMany',
+        target: 'admin::user',
+        inversedBy: 'tests',
+      };
+
+      await removeRestrictedRelationsFn(
+        {
+          data: {
+            users: [{ id: 1, name: 'Secret User' }],
+          },
+          key: 'users',
+          attribute: bidirectionalAttribute,
+          schema: {
+            uid: 'api::test.test',
+            kind: 'collectionType',
+            info: {
+              singularName: 'test',
+              pluralName: 'tests',
+            },
+            options: {},
+            attributes: {
+              users: bidirectionalAttribute,
+            },
+          },
+          value: {},
+          path: {
+            attribute: null,
+            raw: null,
+          },
+        },
+        { remove, set }
+      );
+
+      expect(remove).toHaveBeenCalledWith('users');
+      expect(set).toHaveBeenCalledTimes(0);
+    });
+
     test('removes morphToMany relation output when all targets are unauthorized', async () => {
       const remove = jest.fn();
       const set = jest.fn();
