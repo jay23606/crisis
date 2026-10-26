@@ -42,9 +42,11 @@ const DEFAULT_ALLOWED_FILTERS = ['createdAt', 'updatedAt'];
 const USER_FILTER_ATTRIBUTES = new Set([...CREATOR_FIELDS, 'strapi_assignee']);
 /**
  * Operators whose operand is the admin user a filter selects. Those ids are resolved to display
- * names, so the matching users have to be fetched alongside the list.
+ * names, so the matching users have to be fetched alongside the list. This includes the
+ * negation operators: a user selected with "is not" needs its name resolved exactly like a
+ * user selected with "is", otherwise the chip falls back to the raw id.
  */
-const USER_SELECTION_OPERATORS = ['$eq', '$in'];
+const USER_SELECTION_OPERATORS = new Set(['$eq', '$ne', '$in', '$nin']);
 
 const getSelectedUserIds = (
   appliedFilters: NonNullable<NonNullable<Filters.Query['filters']>['$and']>,
@@ -61,11 +63,15 @@ const getSelectedUserIds = (
       }
 
       Object.entries(operand)
-        .filter(([operator]) => USER_SELECTION_OPERATORS.includes(operator))
-        .forEach(([, id]) => {
-          if (id) {
-            selected.add(id);
-          }
+        .filter(([operator]) => USER_SELECTION_OPERATORS.has(operator))
+        .forEach(([, operatorValue]) => {
+          const ids = Array.isArray(operatorValue) ? operatorValue : [operatorValue];
+
+          ids.forEach((id) => {
+            if (id) {
+              selected.add(id);
+            }
+          });
         });
     });
   });
