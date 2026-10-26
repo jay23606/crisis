@@ -47,6 +47,7 @@ const PERMISSIONS_BY_TOKEN_TYPE: Record<string, Array<'push' | 'pull'> | undefin
   push: ['push'],
   pull: ['pull'],
   'pull-push': ['push', 'pull'],
+  'push-pull': ['push', 'pull'],
 };
 
 /* -------------------------------------------------------------------------------------------------
