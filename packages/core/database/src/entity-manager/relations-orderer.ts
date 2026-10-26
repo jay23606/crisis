@@ -223,20 +223,18 @@ const relationsOrderer = <TRelation extends Record<string, ID | number | null>>(
       }
       idx = afterIdx + 1;
     } else if (r.position?.start) {
-      const [head, follower] = computedRelations;
+      const [head] = computedRelations;
 
+      // A start-positioned relation must sort strictly before a persisted
+      // head. For a head connected in the same payload, preserving its order
+      // lets order-map normalization retain the payload's start ordering.
       if (!head) {
         r.order = 0.5;
-      } else if (!head.init) {
-        r.order = head.order;
+      } else if (head.init) {
+        r.order = head.order - 0.5;
       } else {
-        // Take the middle of the gap the head opens on the list, so the new
-        // order stays strictly inside the range the stored rows already use.
-        const upperBound = follower ? follower.order : head.order + 1;
-
-        r.order = (head.order + upperBound) / 2;
+        r.order = head.order;
       }
-
       idx = 0;
     } else {
       r.order = maxOrder + 0.5;
