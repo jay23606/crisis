@@ -28,6 +28,10 @@ export default class BooleanField extends Field {
       if (normalized === 'true') {
         return true;
       }
+
+      if (normalized === 'false') {
+        return false;
+      }
     }
 
     return Boolean(value);
