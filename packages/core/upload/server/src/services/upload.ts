@@ -461,14 +461,17 @@ export default ({ strapi }: { strapi: Core.Strapi }) => {
     const keepStored = <T>(value: T | null | undefined, stored: T): T =>
       _.isNil(value) ? stored : value;
 
-    const folderHasChanged = !_.isNil(folder) && folder !== dbFile.folder;
+    // Only an omitted folder (undefined) keeps the stored folder. An explicit
+    // null is the Media Library root and must be written, with folderPath '/';
+    // treating null as "not provided" made moving a file to the root a no-op.
+    const folderHasChanged = folder !== undefined && folder !== dbFile.folder;
 
     const newInfos = {
       name: keepStored(name, dbFile.name),
       alternativeText: keepStored(alternativeText, dbFile.alternativeText),
       caption: keepStored(caption, dbFile.caption),
       focalPoint: keepStored(focalPoint, dbFile.focalPoint),
-      folder: keepStored(folder, dbFile.folder),
+      folder: folder === undefined ? dbFile.folder : folder,
       folderPath: folderHasChanged ? await fileService.getFolderPath(folder) : dbFile.folderPath,
     };
 
