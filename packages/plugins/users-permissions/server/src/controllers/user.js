@@ -123,7 +123,7 @@ module.exports = {
       );
       idsHoldingUsername.delete(_.toString(id));
 
-      if (idsHoldingUsername.size !== usersWithSameUsername.length) {
+      if (idsHoldingUsername.size > 0) {
         throw new ApplicationError('Username already taken');
       }
     }
