@@ -395,7 +395,7 @@ const EnumerationInput = ({
     }
 
     return defaultLocales.reduce<Record<string, string>>((acc, locale) => {
-      acc[locale.name] = locale.code;
+      acc[locale.code] = locale.name;
 
       return acc;
     }, {});
