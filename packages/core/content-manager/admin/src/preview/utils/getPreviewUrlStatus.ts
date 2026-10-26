@@ -14,12 +14,14 @@ export function getPreviewUrlStatus(
   const hasPublishedVersion = status === 'published' || status === 'modified';
   const hasDraftVersion = status === 'draft' || status === 'modified';
 
-  if (hasPublishedVersion) {
-    return 'published';
-  }
-
+  // A modified document has both versions, so the draft must win: preview
+  // shows the unpublished changes, not the live content.
   if (hasDraftVersion) {
     return 'draft';
+  }
+
+  if (hasPublishedVersion) {
+    return 'published';
   }
 
   return undefined;
