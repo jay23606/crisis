@@ -311,7 +311,7 @@ const SettingsPage = () => {
 
   const getTestAddressErrors = React.useCallback(async (body: MutationBody) => {
     try {
-      await schema.validate(body, { abortEarly: false });
+      await schema.validate({ email: body.to }, { abortEarly: false });
 
       return null;
     } catch (error) {
