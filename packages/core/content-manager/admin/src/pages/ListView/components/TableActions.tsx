@@ -181,24 +181,7 @@ const CloneAction: DocumentActionComponent = ({ model, documentId }) => {
   const { toggleNotification } = useNotification();
   const { autoClone } = useDocumentActions();
   const [prohibitedFields, setProhibitedFields] = React.useState<ProhibitedCloningField[]>([]);
-  const [clonedDocumentId, setClonedDocumentId] = React.useState<string | null>(null);
   const [{ query }] = useQueryParams<{ plugins?: { i18n?: { locale?: string } } }>();
-
-  /**
-   * The clone is created by the API, so we can only open it once the mutation has resolved.
-   */
-  React.useEffect(() => {
-    if (!clonedDocumentId) {
-      return;
-    }
-
-    navigate({
-      pathname: documentId,
-      search: stringify({
-        plugins: query.plugins,
-      }),
-    });
-  }, [clonedDocumentId, documentId, navigate, query.plugins]);
 
   return {
     disabled: !canCreate,
@@ -232,7 +215,12 @@ const CloneAction: DocumentActionComponent = ({ model, documentId }) => {
       });
 
       if ('data' in res) {
-        setClonedDocumentId(res.data.documentId);
+        navigate({
+          pathname: res.data.documentId,
+          search: stringify({
+            plugins: query.plugins,
+          }),
+        });
 
         /**
          * We return true because we don't need to show a modal anymore.
