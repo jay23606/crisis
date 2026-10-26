@@ -179,13 +179,13 @@ const isMinSuperiorThanMax = <
   name: 'isMinSuperiorThanMax',
   message: getTrad('error.validation.minSupMax'),
   test(min: T | undefined) {
-    if (!min) {
+    if (min === undefined || min === null || min === '') {
       return true;
     }
 
     const { max } = this.parent as { max?: T };
 
-    if (!max) {
+    if (max === undefined || max === null || max === '') {
       return true;
     }
 
@@ -195,7 +195,7 @@ const isMinSuperiorThanMax = <
       return true;
     }
 
-    return Math.max(...bounds) !== toNumber(min);
+    return bounds[0] <= bounds[1];
   },
 });
 
