@@ -536,13 +536,7 @@ const createQueryBuilder = (
     },
 
     shouldApplySearch() {
-      if (!state.search) {
-        return false;
-      }
-
-      // The search term is matched against the columns the query reads, so it
-      // only has something to compare against once a selection is in place.
-      return state.type === 'select' && state.select.length > 0;
+      return Boolean(state.search);
     },
 
     shouldUseDeepSort() {
