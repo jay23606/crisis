@@ -347,9 +347,9 @@ const useFieldHint = (
 ) => {
   const { formatMessage } = useIntl();
 
-  const { maximum, minimum, boundCount } = getDisplayedBounds(attribute);
+  const { maximum, minimum } = getMinMax(attribute);
 
-  if (boundCount === 0) {
+  if (!maximum && !minimum) {
     return hint;
   }
 
@@ -365,7 +365,7 @@ const useFieldHint = (
       )
     : null;
 
-  const hasMinAndMax = boundCount === 2;
+  const hasMinAndMax = typeof minimum === 'number' && typeof maximum === 'number';
 
   return formatMessage(
     {
@@ -387,17 +387,6 @@ const useFieldHint = (
       br: <br />,
     }
   );
-};
-
-/**
- * Resolves the bounds of an attribute alongside how many of them are displayed in the hint,
- * so the hint can tell "min. 5" apart from "min. 5 / max. 50".
- */
-const getDisplayedBounds = (attribute: Schema.Attribute.AnyAttribute) => {
-  const { maximum, minimum } = getMinMax(attribute);
-  const bounds = [minimum, maximum].filter((bound) => Boolean(bound));
-
-  return { maximum, minimum, boundCount: bounds.length };
 };
 
 const getMinMax = (attribute: Schema.Attribute.AnyAttribute) => {
