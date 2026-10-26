@@ -312,23 +312,18 @@ export const filterWidgetsByHomepageLayout = (
 /**
  * Sorts widgets according to the homepage layout order
  */
-const getWidgetPriorities = (homepageLayout: Homepage.Layout): Map<string, number> => {
-  const { widgets } = homepageLayout;
-
-  return new Map(widgets.map((widget, index) => [widget.uid, widgets.length - index]));
-};
-
 export const sortWidgetsByHomepageLayout = (
   widgets: WidgetWithUID[],
   homepageLayout: Homepage.Layout
 ): WidgetWithUID[] => {
-  const priorities = getWidgetPriorities(homepageLayout);
+  const widgetOrderMap = new Map(
+    homepageLayout.widgets.map((widget, index) => [widget.uid, index])
+  );
 
   return [...widgets].sort((a, b) => {
-    const aPriority = priorities.get(a.uid) ?? 0;
-    const bPriority = priorities.get(b.uid) ?? 0;
-
-    return aPriority - bPriority;
+    const aIndex = widgetOrderMap.get(a.uid) ?? Number.MAX_SAFE_INTEGER;
+    const bIndex = widgetOrderMap.get(b.uid) ?? Number.MAX_SAFE_INTEGER;
+    return aIndex - bIndex;
   });
 };
 
